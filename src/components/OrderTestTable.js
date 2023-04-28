@@ -11,7 +11,7 @@ const ROWS_PER_PAGE = 10;
 const OrderTestTable = () => {
   const [orderTests, setOrderTests] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0); // start at page 0 for react-paginate
+  const [currentPage, setCurrentPage] = useState(0); // start at page 0
   const [dateRange, setDateRange] = useState({ start: null, end: null });
   const [showRangeError, setShowRangeError] = useState(false);
 
@@ -129,7 +129,7 @@ const OrderTestTable = () => {
               breakClassName={"page-item"}
               breakLinkClassName={"page-link"}
               disabledClassName={"disabled"}
-              forcePage={currentPage} // add this line to force the current page
+              forcePage={currentPage}
             />
           </div>
         </div>
