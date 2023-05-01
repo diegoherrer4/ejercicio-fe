@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import DateRangePicker from "react-daterange-picker";
 import "react-daterange-picker/dist/css/react-calendar.css";
 import ReactPaginate from "react-paginate";
+import Spinner from "react-bootstrap/Spinner";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./OrderTestTable.css";
 
 const API_ENDPOINT =
@@ -15,28 +17,27 @@ const OrderTestTable = () => {
   const [dateRange, setDateRange] = useState({ start: null, end: null });
   const [showRangeError, setShowRangeError] = useState(false);
 
-  // fetch data when date range changes
   useEffect(() => {
-    const fetchOrderTests = async () => {
-      setLoading(true);
-      try {
-        let queryUrl = API_ENDPOINT;
-        if (dateRange.start && dateRange.end) {
+    if (dateRange.start && dateRange.end) {
+      const fetchOrderTests = async () => {
+        setLoading(true);
+        try {
+          let queryUrl = API_ENDPOINT;
           const start = dateRange.start.toISOString();
           const end = dateRange.end.toISOString();
           queryUrl += `?sampleCollectedStartDate=${start}&sampleCollectedEndDate=${end}`;
+          const response = await fetch(queryUrl);
+          const data = await response.json();
+          setOrderTests(data);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
         }
-        const response = await fetch(queryUrl);
-        const data = await response.json();
-        setOrderTests(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchOrderTests();
+      fetchOrderTests();
+    }
   }, [dateRange]);
 
   const handleRangeSelect = (range) => {
@@ -89,7 +90,12 @@ const OrderTestTable = () => {
         maxRangeDuration={7}
       />
 
-      {loading && <div>Loading...</div>}
+      {loading && (
+        <div className="spinner">
+          <Spinner animation="border" />
+        </div>
+      )}
+
       {!loading && orderTests.length === 0 && <div>No data found.</div>}
       {!loading && orderTests.length > 0 && (
         <div>
